@@ -6,32 +6,49 @@ import axios from 'axios';
 
 import PokeCard from './PokeCard';
 import Loader from './Loader';
+import { Button } from "react-bootstrap";
+
+
 
 
 const PokeList = () => {
-  const [pokemons,setPokemons]=useState();
-  const [isLoading,setIsLoading]= useState(true);
+  const [pokemons,setPokemons] = useState([]);
+  const [isLoading,setIsLoading] = useState(true);
+  const [nextPokemons,setNextPokemons] = useState('https://pokeapi.co/api/v2/pokemon');
 
   useEffect(()=>{
-    axios.get( 'https://pokeapi.co/api/v2/pokemon').then((res)=>{const fetches = res.data.results.map((p) =>
+    getPokemons();
+}, []);
+const getPokemons=()=>{
+    axios
+    .get( nextPokemons)
+    .catch(error=>{console.log(error);
+    })
+    .then((res)=>{
+    const fetches = res.data.results.map((p) =>
     axios.get(p.url).then((res) => res.data)
   );
 
-  Promise.all(fetches).then((data) => {
-    setPokemons(data);
-    setIsLoading(false);
-  });
-});
-}, []);
+  setNextPokemons(res.data.next);
 
+  Promise.all(fetches).then((data) => {
+    setPokemons((prevState)=>[...prevState,...data]);
+});
+
+    setIsLoading(false);
+});
+}
 
   return (
     <div>
   <Container>
-  <Row xs={2} md={4} lg={5} className="g-5" className="justify-content-between my-5 d-flex gap-3">
-  {isLoading && (
-            <Loader/>
-          )}
+  <Row 
+  xs={2} 
+  md={4} 
+  lg={5} 
+  className="g-5" className="justify-content-between my-5 d-flex gap-3">
+
+  {isLoading &&  <Loader/>}
           {!isLoading &&
             pokemons.map((pokemon) => (<PokeCard
             key={pokemon.name}
@@ -40,8 +57,11 @@ const PokeList = () => {
             />
               
             ))}
-        </Row>u
+        </Row>
       </Container>
+      <Button variant="primary" size="lg" onClick={getPokemons}>
+        Load more
+      </Button>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 
 
 
@@ -12,6 +13,8 @@ const Header = () => {
             <Navbar bg="dark" expand ="lg" variant="dark">
     <Container>
     <Navbar.Brand href="#home">PokeApp</Navbar.Brand>
+    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
     <Nav className="me-auto">
       <LinkContainer to="/">
       <Nav.Link>Home</Nav.Link>
@@ -25,6 +28,7 @@ const Header = () => {
       <Nav.Link >MyFavourites</Nav.Link>
       </LinkContainer>
     </Nav>
+    </Navbar.Collapse>
     </Container>
   </Navbar>
         
