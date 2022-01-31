@@ -1,61 +1,62 @@
-import React ,{useEffect, useState} from 'react';
-import Container from 'react-bootstrap/Container';
+import React, { useEffect, useState } from "react";
+import Container from "react-bootstrap/Container";
 
-import Row from 'react-bootstrap/Row';
-import axios from 'axios';
+import Row from "react-bootstrap/Row";
+import axios from "axios";
 
-import PokeCard from './PokeCard';
-import Loader from './Loader';
+import PokeCard from "./PokeCard";
+import Loader from "./Loader";
 import { Button } from "react-bootstrap";
 
-
-
-
 const PokeList = () => {
-  const [pokemons,setPokemons] = useState([]);
-  const [isLoading,setIsLoading] = useState(true);
-  const [nextPokemons,setNextPokemons] = useState('https://pokeapi.co/api/v2/pokemon');
-
-  useEffect(()=>{
-    getPokemons();
-}, []);
-const getPokemons=()=>{
-    axios
-    .get( nextPokemons)
-    .catch(error=>{console.log(error);
-    })
-    .then((res)=>{
-    const fetches = res.data.results.map((p) =>
-    axios.get(p.url).then((res) => res.data)
+  const [pokemons, setPokemons] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [nextPokemons, setNextPokemons] = useState(
+    "https://pokeapi.co/api/v2/pokemon"
   );
 
-  setNextPokemons(res.data.next);
+  useEffect(() => {
+    getPokemons();
+  }, []);
+  const getPokemons = () => {
+    axios
+      .get(nextPokemons)
+      .catch((error) => {
+        console.log(error);
+      })
+      .then((res) => {
+        const fetches = res.data.results.map((p) =>
+          axios.get(p.url).then((res) => res.data)
+        );
 
-  Promise.all(fetches).then((data) => {
-    setPokemons((prevState)=>[...prevState,...data]);
-});
+        setNextPokemons(res.data.next);
 
-    setIsLoading(false);
-});
-}
+        Promise.all(fetches).then((data) => {
+          setPokemons((prevState) => [...prevState, ...data]);
+        });
+
+        setIsLoading(false);
+      });
+  };
 
   return (
     <div>
-  <Container>
-  <Row 
-  xs={2} 
-  md={4} 
-  lg={5} 
-  className="g-5" className="justify-content-between my-5 d-flex gap-3">
-
-  {isLoading &&  <Loader/>}
+      <Container>
+        <Row
+          xs={2}
+          md={4}
+          lg={5}
+          className="g-5 justify-content-between my-5 d-flex gap-3"
+        >
+          {isLoading && <Loader />}
           {!isLoading &&
-            pokemons.map((pokemon) => (<PokeCard
-            key={pokemon.name}
-            name={pokemon.image}
-            image={pokemon.sprites.other.dream_world.front_default}
-            />
-              
+            pokemons.map((pokemon) => (
+              <PokeCard
+                key={pokemon.name}
+                name={pokemon.image}
+                image={pokemon.sprites.other.dream_world.front_default}
+                pokemonName={pokemon.name}
+              />
             ))}
         </Row>
       </Container>
